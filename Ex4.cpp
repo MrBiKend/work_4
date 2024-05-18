@@ -33,6 +33,7 @@ public:
   int getCount() {
     return count;
   }
+<<<<<<< HEAD
 
   // Метод для установки нового значения количества экземпляров книги
   void setCount(int newCount) {
@@ -51,6 +52,8 @@ public:
     std::cout << "Автор: " << author << std::endl;
     std::cout << "Количество экземпляров: " << count << std::endl;
   }
+=======
+>>>>>>> 872c37a9258342421ee70bf6cd17f0add91fcb05
 };
 
 int main() {
@@ -60,6 +63,7 @@ int main() {
   // Выводим информацию о книге
   book.displayInfo();
 
+<<<<<<< HEAD
   // Изменяем количество экземпляров книги
   book.setCount(7);
 
@@ -69,5 +73,7 @@ int main() {
   // Выводим обновленную информацию о книге
   book.displayInfo();
 
+=======
+>>>>>>> 872c37a9258342421ee70bf6cd17f0add91fcb05
   return 0;
 }
