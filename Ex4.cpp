@@ -30,11 +30,6 @@ public:
   int getCount() {
     return count;
   }
-
-  // Метод для установки нового значения количества экземпляров книги
-  void setCount(int newCount) {
-    count = newCount;
-  }
 };
 
 int main() {
@@ -45,12 +40,6 @@ int main() {
   std::cout << "Название: " << book.getTitle() << std::endl;
   std::cout << "Автор: " << book.getAuthor() << std::endl;
   std::cout << "Количество экземпляров: " << book.getCount() << std::endl;
-
-  // Изменяем количество экземпляров книги
-  book.setCount(7);
-
-  // Выводим обновленную информацию о книге
-  std::cout << "Новое количество экземпляров: " << book.getCount() << std::endl;
 
   return 0;
 }
