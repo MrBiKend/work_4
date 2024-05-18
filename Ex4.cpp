@@ -1,236 +1,192 @@
-#include <iostream>
-#include <string>
+#include <QApplication>
+#include <QWidget>
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QLineEdit>
+#include <QLabel>
+#include <QSpinBox>
+#include <QMessageBox>
+#include <QString>
 #include <vector>
-#include <algorithm>
+#include <string>
 
-// Класс Книга
 class TBook {
 private:
-  std::string title; // Название книги
-  std::string author; // Автор книги
-  int count; // Количество экземпляров книги
+    std::string title;
+    std::string author;
+    int count;
 
 public:
-  // Конструктор по умолчанию
-  TBook() : title(""), author(""), count(0) {}
+    TBook() : title(""), author(""), count(0) {}
+    TBook(const std::string& bookTitle, const std::string& bookAuthor, int bookCount) 
+        : title(bookTitle), author(bookAuthor), count(bookCount) {}
 
-  // Конструктор с параметрами
-  TBook(const std::string& bookTitle, const std::string& bookAuthor, int bookCount) {
-    title = bookTitle;
-    author = bookAuthor;
-    count = bookCount;
-  }
-
-  // Метод для получения названия книги
-  std::string getTitle() const {
-    return title;
-  }
-
-  // Метод для получения автора книги
-  std::string getAuthor() const {
-    return author;
-  }
-
-  // Метод для получения количества экземпляров книги
-  int getCount() const {
-    return count;
-  }
-
-  // Метод для установки нового значения количества экземпляров книги
-  void setCount(int newCount) {
-    count = newCount;
-  }
-
-  // Метод для установки названия и автора книги
-  void setDetails(const std::string& newTitle, const std::string& newAuthor) {
-    title = newTitle;
-    author = newAuthor;
-  }
-
-  // Метод для отображения информации о книге
-  void displayInfo() const {
-    std::cout << "Название: " << title << std::endl;
-    std::cout << "Автор: " << author << std::endl;
-    std::cout << "Количество экземпляров: " << count << std::endl;
-  }
-
-  // Метод для проверки наличия экземпляров книги
-  bool isAvailable() const {
-    return count > 0;
-  }
-
-  // Метод для выдачи книги (уменьшение количества экземпляров)
-  bool borrowBook() {
-    if (isAvailable()) {
-      count--;
-      return true;
-    } else {
-      return false;
+    std::string getTitle() const { return title; }
+    std::string getAuthor() const { return author; }
+    int getCount() const { return count; }
+    void setCount(int newCount) { count = newCount; }
+    void setDetails(const std::string& newTitle, const std::string& newAuthor) {
+        title = newTitle;
+        author = newAuthor;
     }
-  }
-
-  // Метод для возврата книги (увеличение количества экземпляров)
-  void returnBook() {
-    count++;
-  }
+    bool isAvailable() const { return count > 0; }
+    bool borrowBook() {
+        if (isAvailable()) {
+            count--;
+            return true;
+        }
+        return false;
+    }
+    void returnBook() { count++; }
 };
 
-// Класс Библиотека
 class Library {
 private:
-  std::vector<TBook> books; // Коллекция книг
+    std::vector<TBook> books;
 
 public:
-  // Метод для добавления книги в библиотеку
-  void addBook(const TBook& book) {
-    books.push_back(book);
-  }
-
-  // Метод для удаления книги по названию
-  bool removeBookByTitle(const std::string& title) {
-    auto it = std::remove_if(books.begin(), books.end(),
-      [&title](const TBook& book) {
-        return book.getTitle() == title;
-      });
-    if (it != books.end()) {
-      books.erase(it, books.end());
-      return true;
+    void addBook(const TBook& book) {
+        books.push_back(book);
     }
-    return false;
-  }
 
-  // Метод для поиска книги по названию
-  TBook* findBookByTitle(const std::string& title) {
-    for (auto& book : books) {
-      if (book.getTitle() == title) {
-        return &book;
-      }
+    bool removeBookByTitle(const std::string& title) {
+        auto it = std::remove_if(books.begin(), books.end(), [&title](const TBook& book) {
+            return book.getTitle() == title;
+        });
+        if (it != books.end()) {
+            books.erase(it, books.end());
+            return true;
+        }
+        return false;
     }
-    return nullptr;
-  }
 
-  // Метод для поиска книги по автору
-  TBook* findBookByAuthor(const std::string& author) {
-    for (auto& book : books) {
-      if (book.getAuthor() == author) {
-        return &book;
-      }
+    TBook* findBookByTitle(const std::string& title) {
+        for (auto& book : books) {
+            if (book.getTitle() == title) {
+                return &book;
+            }
+        }
+        return nullptr;
     }
-    return nullptr;
-  }
 
-  // Метод для отображения информации обо всех книгах
-  void displayAllBooks() const {
-    for (const auto& book : books) {
-      book.displayInfo();
-      std::cout << std::endl;
+    void displayAllBooks() const {
+        for (const auto& book : books) {
+            std::cout << "Название: " << book.getTitle() << "\n";
+            std::cout << "Автор: " << book.getAuthor() << "\n";
+            std::cout << "Количество экземпляров: " << book.getCount() << "\n\n";
+        }
     }
-  }
 };
 
-int main() {
-  Library library;
+class MainWindow : public QWidget {
+    Q_OBJECT
 
-  // Добавление книг в библиотеку
-  library.addBook(TBook("Программирование на C++", "Иван Иванов", 5));
-  library.addBook(TBook("Продвинутое программирование на C++", "Петр Петров", 3));
-  library.addBook(TBook("Основы алгоритмов", "Николай Николаев", 7));
+private:
+    Library library;
+    QLineEdit* titleLineEdit;
+    QLineEdit* authorLineEdit;
+    QSpinBox* countSpinBox;
 
-  while (true) {
-    std::cout << "\nМеню:\n";
-    std::cout << "1. Показать все книги\n";
-    std::cout << "2. Найти книгу по названию\n";
-    std::cout << "3. Найти книгу по автору\n";
-    std::cout << "4. Добавить книгу\n";
-    std::cout << "5. Удалить книгу по названию\n";
-    std::cout << "6. Взять книгу\n";
-    std::cout << "7. Вернуть книгу\n";
-    std::cout << "8. Выйти\n";
-    std::cout << "Выберите опцию: ";
+public:
+    MainWindow(QWidget* parent = nullptr) : QWidget(parent) {
+        QVBoxLayout* mainLayout = new QVBoxLayout(this);
 
-    int choice;
-    std::cin >> choice;
+        titleLineEdit = new QLineEdit(this);
+        authorLineEdit = new QLineEdit(this);
+        countSpinBox = new QSpinBox(this);
+        countSpinBox->setMinimum(1);
+        countSpinBox->setMaximum(1000);
 
-    if (choice == 1) {
-      std::cout << "Все книги в библиотеке:\n";
-      library.displayAllBooks();
-    } else if (choice == 2) {
-      std::cout << "Введите название книги: ";
-      std::string title;
-      std::cin.ignore();
-      std::getline(std::cin, title);
-      TBook* book = library.findBookByTitle(title);
-      if (book) {
-        book->displayInfo();
-      } else {
-        std::cout << "Книга не найдена.\n";
-      }
-    } else if (choice == 3) {
-      std::cout << "Введите автора книги: ";
-      std::string author;
-      std::cin.ignore();
-      std::getline(std::cin, author);
-      TBook* book = library.findBookByAuthor(author);
-      if (book) {
-        book->displayInfo();
-      } else {
-        std::cout << "Книга не найдена.\n";
-      }
-    } else if (choice == 4) {
-      std::string title, author;
-      int count;
-      std::cout << "Введите название книги: ";
-      std::cin.ignore();
-      std::getline(std::cin, title);
-      std::cout << "Введите автора книги: ";
-      std::getline(std::cin, author);
-      std::cout << "Введите количество экземпляров: ";
-      std::cin >> count;
-      library.addBook(TBook(title, author, count));
-      std::cout << "Книга добавлена.\n";
-    } else if (choice == 5) {
-      std::cout << "Введите название книги для удаления: ";
-      std::string title;
-      std::cin.ignore();
-      std::getline(std::cin, title);
-      if (library.removeBookByTitle(title)) {
-        std::cout << "Книга удалена.\n";
-      } else {
-        std::cout << "Книга не найдена.\n";
-      }
-    } else if (choice == 6) {
-      std::cout << "Введите название книги для выдачи: ";
-      std::string title;
-      std::cin.ignore();
-      std::getline(std::cin, title);
-      TBook* book = library.findBookByTitle(title);
-      if (book) {
-        if (book->borrowBook()) {
-          std::cout << "Книга успешно выдана.\n";
-        } else {
-          std::cout << "Книга недоступна для выдачи.\n";
-        }
-      } else {
-        std::cout << "Книга не найдена.\n";
-      }
-    } else if (choice == 7) {
-      std::cout << "Введите название книги для возврата: ";
-      std::string title;
-      std::cin.ignore();
-      std::getline(std::cin, title);
-      TBook* book = library.findBookByTitle(title);
-      if (book) {
-        book->returnBook();
-        std::cout << "Книга успешно возвращена.\n";
-      } else {
-        std::cout << "Книга не найдена.\n";
-      }
-    } else if (choice == 8) {
-      break;
-    } else {
-      std::cout << "Неверный выбор. Попробуйте снова.\n";
+        QPushButton* addBookButton = new QPushButton("Добавить книгу", this);
+        QPushButton* removeBookButton = new QPushButton("Удалить книгу", this);
+        QPushButton* borrowBookButton = new QPushButton("Взять книгу", this);
+        QPushButton* returnBookButton = new QPushButton("Вернуть книгу", this);
+        QPushButton* displayBooksButton = new QPushButton("Показать все книги", this);
+
+        connect(addBookButton, &QPushButton::clicked, this, &MainWindow::addBook);
+        connect(removeBookButton, &QPushButton::clicked, this, &MainWindow::removeBook);
+        connect(borrowBookButton, &QPushButton::clicked, this, &MainWindow::borrowBook);
+        connect(returnBookButton, &QPushButton::clicked, this, &MainWindow::returnBook);
+        connect(displayBooksButton, &QPushButton::clicked, this, &MainWindow::displayBooks);
+
+        mainLayout->addWidget(new QLabel("Название книги:", this));
+        mainLayout->addWidget(titleLineEdit);
+        mainLayout->addWidget(new QLabel("Автор книги:", this));
+        mainLayout->addWidget(authorLineEdit);
+        mainLayout->addWidget(new QLabel("Количество экземпляров:", this));
+        mainLayout->addWidget(countSpinBox);
+        mainLayout->addWidget(addBookButton);
+        mainLayout->addWidget(removeBookButton);
+        mainLayout->addWidget(borrowBookButton);
+        mainLayout->addWidget(returnBookButton);
+        mainLayout->addWidget(displayBooksButton);
+
+        setLayout(mainLayout);
     }
-  }
 
-  return 0;
+private slots:
+    void addBook() {
+        QString title = titleLineEdit->text();
+        QString author = authorLineEdit->text();
+        int count = countSpinBox->value();
+        library.addBook(TBook(title.toStdString(), author.toStdString(), count));
+        QMessageBox::information(this, "Информация", "Книга добавлена.");
+        titleLineEdit->clear();
+        authorLineEdit->clear();
+        countSpinBox->setValue(1);
+    }
+
+    void removeBook() {
+        QString title = titleLineEdit->text();
+        if (library.removeBookByTitle(title.toStdString())) {
+            QMessageBox::information(this, "Информация", "Книга удалена.");
+        } else {
+            QMessageBox::warning(this, "Ошибка", "Книга не найдена.");
+        }
+    }
+
+    void borrowBook() {
+        QString title = titleLineEdit->text();
+        TBook* book = library.findBookByTitle(title.toStdString());
+        if (book) {
+            if (book->borrowBook()) {
+                QMessageBox::information(this, "Информация", "Книга успешно выдана.");
+            } else {
+                QMessageBox::warning(this, "Ошибка", "Книга недоступна для выдачи.");
+            }
+        } else {
+            QMessageBox::warning(this, "Ошибка", "Книга не найдена.");
+        }
+    }
+
+    void returnBook() {
+        QString title = titleLineEdit->text();
+        TBook* book = library.findBookByTitle(title.toStdString());
+        if (book) {
+            book->returnBook();
+            QMessageBox::information(this, "Информация", "Книга успешно возвращена.");
+        } else {
+            QMessageBox::warning(this, "Ошибка", "Книга не найдена.");
+        }
+    }
+
+    void displayBooks() {
+        QString allBooks;
+        for (const auto& book : library.books) {
+            allBooks += "Название: " + QString::fromStdString(book.getTitle()) + "\n";
+            allBooks += "Автор: " + QString::fromStdString(book.getAuthor()) + "\n";
+            allBooks += "Количество экземпляров: " + QString::number(book.getCount()) + "\n\n";
+        }
+        QMessageBox::information(this, "Все книги", allBooks);
+    }
+};
+
+int main(int argc, char *argv[]) {
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
+    return app.exec();
 }
+
+#include "main.moc"
