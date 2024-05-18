@@ -9,6 +9,9 @@ private:
   int count; // Количество экземпляров книги
 
 public:
+  // Конструктор по умолчанию
+  TBook() : title(""), author(""), count(0) {}
+
   // Конструктор с параметрами
   TBook(const std::string& bookTitle, const std::string& bookAuthor, int bookCount) {
     title = bookTitle;
@@ -35,6 +38,19 @@ public:
   void setCount(int newCount) {
     count = newCount;
   }
+
+  // Метод для установки названия и автора книги
+  void setDetails(const std::string& newTitle, const std::string& newAuthor) {
+    title = newTitle;
+    author = newAuthor;
+  }
+
+  // Метод для отображения информации о книге
+  void displayInfo() const {
+    std::cout << "Название: " << title << std::endl;
+    std::cout << "Автор: " << author << std::endl;
+    std::cout << "Количество экземпляров: " << count << std::endl;
+  }
 };
 
 int main() {
@@ -42,15 +58,16 @@ int main() {
   TBook book("Программирование на C++", "Иван Иванов", 5);
 
   // Выводим информацию о книге
-  std::cout << "Название: " << book.getTitle() << std::endl;
-  std::cout << "Автор: " << book.getAuthor() << std::endl;
-  std::cout << "Количество экземпляров: " << book.getCount() << std::endl;
+  book.displayInfo();
 
   // Изменяем количество экземпляров книги
   book.setCount(7);
 
+  // Изменяем название и автора книги
+  book.setDetails("Продвинутое программирование на C++", "Петр Петров");
+
   // Выводим обновленную информацию о книге
-  std::cout << "Новое количество экземпляров: " << book.getCount() << std::endl;
+  book.displayInfo();
 
   return 0;
 }
